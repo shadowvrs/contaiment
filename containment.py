@@ -374,12 +374,6 @@ def perform_use_command(object_name):
 				if notes_entity.visible == False and notes_entity.location == current_location:
 					notes_entity.visible = True
 					print_to_description("You bring the tablet to your eye and see lab notes scattered on the ground.\n")
-				elif notes_two.visible == False and notes_two.location == current_location:
-					notes_two.visible = True
-					print_to_description("You bring the tablet to your eye and see lab notes scattered on the ground.\n")
-				elif notes_three.visible == False and notes_three.location == current_location:
-					notes_three.visible = True
-					print_to_description("You bring the tablet to your eye and see lab notes scattered on the ground.\n")
 				elif desktop_been_used and desktop_office.location == current_location:
 					print_to_description("You bring the tablet to your eye and are suddenly able to see a passcode inside the file.\n")
 					with open(os.path.join(path_to_file, file_name), 'a') as game:
