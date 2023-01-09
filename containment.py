@@ -122,7 +122,7 @@ if os.name == "posix":
 	path_to_file = os.path.expanduser("~/Desktop")
 else:
 	url_jumpscare = ".\pages\index.html"
-	path_to_file = os.path.expanduser("C:\\User\\" + os.getlogin() + "\\OneDrive\\Desktop")
+	path_to_file = os.path.expanduser("C:\\User\\" + os.getlogin() + "\\OneDrive\\Desktop\\")
 
 file_name = "security_codes.txt"
 
@@ -489,9 +489,9 @@ def describe_current_location():
 		with open(os.path.join("", "credits.txt"), 'w') as game:
 			game.write("Created by: Cole K")
 		if os.name == "posix":
-			os.system("rm containment.py && rm GameObject.py && rm -r pages && rm -r res")
+			os.system("rm containment.py && rm GameObject.py && rm -r pages && rm -r res && rm __pycache__")
 		elif os.name == "nt":
-			os.system("del containment.py & del GameObject.py & rmdir pages & rmdir res")
+			os.system("del containment.py & del GameObject.py & rmdir pages & rmdir res && rmdir __pycache__")
 		else:
 			print("Error")
 		exit()
