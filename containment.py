@@ -8,7 +8,7 @@ import GameObject
 
 PORTRAIT_LAYOUT = True
 
-ENTRENCE = 1
+ENTRANCE = 1
 STORAGE_ROOM = 2
 PATHWAY_ONE = 3
 OFFICE = 4
@@ -49,7 +49,7 @@ Displaying file objective.tnxt
 As you may know, your task is to retrive data logs on subject #01482, if you succeed you will be rewarded handsomely.
 
 ---Safety---
-To avoid any containment breeches, you will be sealed into the facility apon entering. The entrence will be unsealed once you have successfully uploaded the data logs on subject #01482 to our servers.
+To avoid any containment breeches, you will be sealed into the facility apon entering. The entrance will be unsealed once you have successfully uploaded the data logs on subject #01482 to our servers.
 
 ---Help---
 If you ever feel you don't quite understand something, think of "help" and your neural implante will feed you answers.\n
@@ -113,12 +113,14 @@ tunnel_created = False
 desktop_been_used = False
 final_screen = False
 
-current_location = ENTRENCE
+current_location = ENTRANCE
 turns_in_room_with_entity = 0
 turns_entity_is_inactivate = 5
 new_tab = 2
-
-url_jumpscare = "pages/index.html"
+if os.name == "posix":
+	url_jumpscare = "pages/index.html"
+else:
+	url_jumpscare = ".\pages\index.html"
 file_name = "security_codes.txt"
 path_to_file = os.path.expanduser("~/Desktop")
 
@@ -387,7 +389,7 @@ def perform_use_command(object_name):
 		elif game_object == breaker:
 			if light:
 				if first_time_using_breaker:
-					print_to_description("ERROR: unknown access to neural implante.\nYou flip the switches on the breaker, all power is restored.\nYou hear a loud scream from the halls, it pirces your ears causing them to start bleeding.\n")
+					print_to_description("ERROR: unknown access to neural implant.\nYou flip the switches on the breaker, all power is restored.\nYou hear a loud scream from the halls, it pirces your ears causing them to start bleeding.\n")
 					try:
 						webbrowser.open(url_jumpscare, new=new_tab)
 					except:
@@ -462,7 +464,7 @@ def perform_help_command():
 def describe_current_location():
 	current_room = ""
 
-	if (current_location == ENTRENCE):
+	if (current_location == ENTRANCE):
 		current_room = "Entrence"
 	elif (current_location == STORAGE_ROOM):
 		current_room = "Storage Room"
@@ -502,7 +504,7 @@ def set_current_image():
 	if end_of_game == False:
 		if light:
 			if entity_one.location == current_location or entity_two.location == current_location:
-				if (current_location == ENTRENCE):
+				if (current_location == ENTRANCE):
 					image_label.img = PhotoImage(file = "res/entity/entrance.gif")
 				elif (current_location == STORAGE_ROOM):
 					image_label.img = PhotoImage(file = "res/entity/storage_room.gif")
@@ -535,7 +537,7 @@ def set_current_image():
 				else:
 					image_label.img = PhotoImage(file = "res/blank-1.gif")
 			else:
-				if (current_location == ENTRENCE):
+				if (current_location == ENTRANCE):
 					image_label.img = PhotoImage(file = "res/normal/entrance.gif")
 				elif (current_location == STORAGE_ROOM):
 					image_label.img = PhotoImage(file = "res/normal/storage_room.gif")
@@ -587,7 +589,7 @@ def set_current_image():
 		
 def get_location_forward():
 	if final_screen == False:
-		if (current_location == ENTRENCE):
+		if (current_location == ENTRANCE):
 			return PATHWAY_ONE
 		elif (current_location == PATHWAY_ONE):
 			return PATHWAY_TWO
@@ -613,7 +615,7 @@ def get_location_forward():
 
 def get_location_backward():
 	if (current_location == PATHWAY_ONE):
-		return ENTRENCE
+		return ENTRANCE
 	elif (current_location == STORAGE_ROOM):
 		return PATHWAY_THREE
 	elif (current_location == PATHWAY_THREE):
@@ -707,7 +709,7 @@ def print_to_description(output, user_input=False):
 	description_widget.see(END)
 
 def assign_random_room():
-	room = random.randrange(ENTRENCE, TUNNEL)
+	room = random.randrange(ENTRANCE, TUNNEL)
 	return room
 
 def can_entity_kill():
