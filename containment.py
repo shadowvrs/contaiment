@@ -465,7 +465,7 @@ def describe_current_location():
 	current_room = ""
 
 	if (current_location == ENTRANCE):
-		current_room = "Entrence"
+		current_room = "Entrance"
 	elif (current_location == STORAGE_ROOM):
 		current_room = "Storage Room"
 	elif (current_location == PATHWAY_ONE) or (current_location == PATHWAY_THREE) or (current_location == PATHWAY_TWO) or (current_location == PATHWAY_FOUR) or (current_location == PATHWAY_FIVE) or (current_location == PATHWAY_SIX):
