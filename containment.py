@@ -119,10 +119,12 @@ turns_entity_is_inactivate = 5
 new_tab = 2
 if os.name == "posix":
 	url_jumpscare = "pages/index.html"
+	path_to_file = os.path.expanduser("~/Desktop")
 else:
 	url_jumpscare = ".\pages\index.html"
+	path_to_file = os.path.expanduser("C:\\User\\" + os.getlogin() + "\\OneDrive\\Desktop")
+
 file_name = "security_codes.txt"
-path_to_file = os.path.expanduser("~/Desktop")
 
 flashlight = GameObject.GameObject("Flashlight", 0, True, True, True, False, "A small flashlight that emits a faint light.")
 usb = GameObject.GameObject("USB", 0, True, True, True, False, "A small 32 gigabyte USB, given to you by <<REDACTED>>. It has just enough space for the logs.")
