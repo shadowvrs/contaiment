@@ -100,6 +100,7 @@ forward_button = None
 backwards_button = None
 right_button = None
 left_button = None
+flashlight_button = None
 root = None
 
 refresh_location = True
@@ -120,9 +121,12 @@ new_tab = 2
 if os.name == "posix":
 	url_jumpscare = "pages/index.html"
 	path_to_file = os.path.expanduser("~/Desktop")
-else:
+elif os.name == "nt":
 	url_jumpscare = ".\pages\index.html"
-	path_to_file = os.path.expanduser("C:\\User\\" + os.getlogin() + "\\OneDrive\\Desktop\\")
+	path_to_file = "C:\\Users\\" + os.getlogin() + "\\Desktop"
+else:
+	url_jumpscare = "pages/index.html"
+	path_to_file = os.path.expanduser(" ")
 
 file_name = "security_codes.txt"
 
@@ -130,7 +134,7 @@ flashlight = GameObject.GameObject("Flashlight", 0, True, True, True, False, "A 
 usb = GameObject.GameObject("USB", 0, True, True, True, False, "A small 32 gigabyte USB, given to you by <<REDACTED>>. It has just enough space for the logs.")
 
 tablet = GameObject.GameObject("Tablet", 0, True, True, False, False, "A small stone tablet with strange symboles carved in around a hole directly in the middel of the tablet.")
-acid_jar = GameObject.GameObject("Acid Jar", 0, True, True, False, False, "A small metal container containg acid.")
+acid_jar = GameObject.GameObject("container of Acid", 0, True, True, False, False, "A small metal container containg acid.")
 
 debris_one = GameObject.GameObject("Debris", PATHWAY_FIVE, False, True, False, False, "Debris from the celling fills the passage ahead, if you look closely through the gaps in the rocks and boulders, you're able to see a opening into another room, you might be able to get there if you could only find a way to remove the rocks.")
 debris_two = GameObject.GameObject("Debris", PATHWAY_SIX, False, True, False, False, "Debris from the celling fills the passage ahead.")
@@ -376,8 +380,12 @@ def perform_use_command(object_name):
 					print_to_description("You bring the tablet to your eye and see lab notes scattered on the ground.\n")
 				elif desktop_been_used and desktop_office.location == current_location:
 					print_to_description("You bring the tablet to your eye and are suddenly able to see a passcode inside the file.\n")
-					with open(os.path.join(path_to_file, file_name), 'a') as game:
-						game.write("\nServer room code: 2367")
+					try:
+						with open(os.path.join(path_to_file, file_name), 'a') as game:
+							game.write("\nServer room code: 2367")
+					except:
+						with open(os.path.join(path_to_file, file_name), 'a') as game:
+							game.write("\nServer room code: 2367")
 				else:
 					print_to_description("You bring the tablet to your eye, but you don't see anything in the room.\n")					
 			else:
@@ -403,8 +411,12 @@ def perform_use_command(object_name):
 				if desktop_been_used == False:
 					if note_login_info.carried:
 						print_to_description("You put in the login info you aquired from the dead body. The computer boots up, you scower around the desktop only to find a file on the desktop named 'security_codes.txt'.")
-						with open(os.path.join(path_to_file, file_name), 'w') as game:
-							game.write("Use the all seeing eye.")
+						try:
+							with open(os.path.join(path_to_file, file_name), 'w') as game:
+								game.write("Use the all seeing eye.")
+						except:
+							with open(os.path.join("", file_name), 'w') as game:
+								game.write("Use the all seeing eye.")
 						desktop_been_used = True
 					else:
 						print_to_description("You don't know the login info.\n")
@@ -491,10 +503,10 @@ def describe_current_location():
 		if os.name == "posix":
 			os.system("rm containment.py && rm GameObject.py && rm -r pages && rm -r res && rm __pycache__")
 		elif os.name == "nt":
-			os.system("del containment.py & del GameObject.py & rmdir pages & rmdir res && rmdir __pycache__")
+			os.system("del containment.py & del GameObject.py & rmdir /Q /S pages & rmdir /Q /S res && rmdir /Q /S __pycache__")
 		else:
 			print("Error")
-		exit()
+		sys.exit()
 
 def set_current_image():
 	if end_of_game == False:
@@ -514,7 +526,7 @@ def set_current_image():
 				elif (current_location == SERVER_ROOM):
 					image_label.img = PhotoImage(file = "res/entity/server_room.gif")
 				elif (current_location == PATHWAY_TWO):
-					if door_pathway_one.visible:
+					if door_pathway_two.visible:
 						image_label.img = PhotoImage(file = "res/entity/pathway_two.gif")
 					else:
 						image_label.img = PhotoImage(file = "res/entity/pathway_two_door_open.gif")
@@ -547,7 +559,7 @@ def set_current_image():
 				elif (current_location == SERVER_ROOM):
 					image_label.img = PhotoImage(file = "res/normal/server_room.gif")
 				elif (current_location == PATHWAY_TWO):
-					if door_pathway_one.visible:
+					if door_pathway_two.visible:
 						image_label.img = PhotoImage(file = "res/normal/pathway_two.gif")
 					else:
 						image_label.img = PhotoImage(file = "res/normal/pathway_two_door_open.gif")
@@ -801,6 +813,9 @@ def build_interface():
 	left_button = Button(button_frame, font=(BUTTON_FONT, BUTTON_FONT_SIZE), bg = BUTTON_BACKGROUND_COLOR, fg = TEXT_COLOR, highlightbackground=BORDER_COLOR_INACTIVE, text = "⇦", width = 3)
 	left_button.grid(row=1, column=0, padx = 2, pady = 2)
 	left_button.config(command = left_button_click)
+
+	flashlight_button = Button(button_frame, font=(BUTTON_FONT, BUTTON_FONT_SIZE), bg = BUTTON_BACKGROUND_COLOR, fg = TEXT_COLOR, highlightbackground=BORDER_COLOR_ACTIVE, text = "", width = 3)
+	flashlight_button.grid(row=1, column=1)
 	
 	inventory_widget = Text(root, bg = TEXT_BOX_BACKGROUND_COLOR, fg = TEXT_COLOR, highlightbackground=BORDER_COLOR_INACTIVE, highlightcolor=BORDER_COLOR_ACTIVE, width = (30 if PORTRAIT_LAYOUT else 38), height = (8 if PORTRAIT_LAYOUT else 6), relief = GROOVE , state=DISABLED )
 	if (PORTRAIT_LAYOUT):
@@ -845,9 +860,6 @@ def left_button_click():
 	perform_command("L", "")
 
 def return_key_enter(event):
-	global root_prompt
-	global user_response
-
 	if event.widget == command_widget:
 		command_string = command_widget.get()
 		print_to_description(command_string, True)
@@ -859,9 +871,6 @@ def return_key_enter(event):
 		perform_command(verb.upper(), noun.upper())
 		
 		set_current_state()
-	elif event.widget == user_input_widget:
-		user_response = user_input_widget.get()
-		root_prompt.destroy()
 
 def set_directions_to_move():
 
