@@ -135,7 +135,7 @@ flashlight = GameObject.GameObject("Flashlight", 0, True, True, True, False, "A 
 usb = GameObject.GameObject("USB", 0, True, True, True, False, "A small 32 gigabyte USB, given to you by <<REDACTED>>. It has just enough space for the logs.")
 
 tablet = GameObject.GameObject("Tablet", 0, True, True, False, False, "A small stone tablet with strange symboles carved in around a hole directly in the middel of the tablet.")
-acid_jar = GameObject.GameObject("container of Acid", 0, True, True, False, False, "A small metal container containg acid.")
+acid_jar = GameObject.GameObject("Container of Acid", 0, True, True, False, False, "A small metal container containg acid.")
 
 debris_one = GameObject.GameObject("Debris", PATHWAY_FIVE, False, True, False, False, "Debris from the celling fills the passage ahead, if you look closely through the gaps in the rocks and boulders, you're able to see a opening into another room, you might be able to get there if you could only find a way to remove the rocks.")
 debris_two = GameObject.GameObject("Debris", PATHWAY_SIX, False, True, False, False, "Debris from the celling fills the passage ahead.")
