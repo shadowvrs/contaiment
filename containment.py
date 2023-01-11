@@ -37,7 +37,8 @@ BORDER_COLOR_ACTIVE = "#c8c8c8"
 TEXT_COLOR = "white"
 
 BUTTON_FONT = "sans serif"
-BUTTON_FONT_SIZE = 13
+BUTTON_FONT_SIZE = 15
+BUTTON_FLASHLIGHT_FONT_SIZE = 13
 
 DOWNLOAD_INFO = """
 Download Complete!
@@ -368,6 +369,7 @@ def perform_use_command(object_name):
 			if light:
 				light = False
 				print_to_description("You turn off the light.\n")
+				can_entity_kill()
 			else:
 				light = True
 				print_to_description("You turn on the light.\n")
@@ -462,7 +464,8 @@ def perform_use_command(object_name):
 		else:
 			print_to_description("You can't use that object.\n")
 
-		can_entity_kill()
+		if game_object != flashlight:
+			can_entity_kill()
 	else:
 		print_to_description("Specify which object to use.\n")
 
@@ -490,24 +493,15 @@ def describe_current_location():
 		current_room = "Breaker Room"
 	elif (current_location == VOID_ONE) or (current_location == VOID_TWO) or (current_location == VOID_THREE) or (current_location == VOID_FOUR):
 		current_room = "???"
+		if (current_location == VOID_THREE):
+			print_to_description("I have been trabed in here for so long, memories and pain given to me only for the enjoymentof others.\nI am done now... no more pain, no more containment.")
+		elif (current_location == VOID_FOUR):
+			delete_everything()
 	else:
 		current_room = "Unknown location:" + current_location
 
 	print_to_description("Location: " + current_room)
-
-	if (current_location == VOID_THREE):
-		print_to_description("I have been trabed in here for so long, memories and pain given to me only for the enjoymentof others.\nI am done now... no more pain, no more containment.\nYou will not be uploading that data.")
-	elif (current_location == VOID_FOUR):
-		with open(os.path.join("", "credits.txt"), 'w') as game:
-			game.write("Created by: Cole K")
-		if os.name == "posix":
-			os.system("rm containment.py && rm GameObject.py && rm -r pages && rm -r res && rm __pycache__")
-		elif os.name == "nt":
-			os.system("del containment.py & del GameObject.py & rmdir /Q /S pages & rmdir /Q /S res && rmdir /Q /S __pycache__")
-		else:
-			print("Error")
-		sys.exit()
-
+	
 def set_current_image():
 	if end_of_game == False:
 		if light:
@@ -730,10 +724,11 @@ def can_entity_kill():
 		if light and turns_in_room_with_entity >= 1:
 			print_to_description("With one quick slash from ???, you fall to the ground, dead.")
 			end_of_game = True
+			set_current_state()
 		else:
 			entity_one.location = 0
 			entity_two.location = 0
-			turns_entity_is_inactivate += 2
+			turns_entity_is_inactivate += 3
 	else:
 		if turns_entity_is_inactivate <= 0:
 			if first_time_entity_activates:
@@ -754,7 +749,19 @@ def can_entity_kill():
 	
 	set_current_image()
 
+def delete_everything():
+	with open(os.path.join("", "credits.txt"), 'w') as game:
+		game.write("Created by: Cole K")
+	if os.name == "posix":
+		os.system("rm containment.py && rm GameObject.py && rm -r pages && rm -r res && rm __pycache__")
+	elif os.name == "nt":
+		os.system("del containment.py & del GameObject.py & rmdir /Q /S pages & rmdir /Q /S res && rmdir /Q /S __pycache__")
+	else:
+		print("Error")
+	quit()
+
 def build_interface():
+	global flashlight_button
 	global command_widget
 	global image_label
 	global description_widget
@@ -798,24 +805,25 @@ def build_interface():
 	else:
 		button_frame.grid(row=2, column=1, columnspan =1, padx = 2, pady = 2)
 
-	forward_button = Button(button_frame, font=(BUTTON_FONT, BUTTON_FONT_SIZE), bg = BUTTON_BACKGROUND_COLOR, fg = TEXT_COLOR, highlightbackground=BORDER_COLOR_INACTIVE, text = "⇧", width = 3)
+	forward_button = Button(button_frame, font=(BUTTON_FONT, BUTTON_FONT_SIZE), bg = BUTTON_BACKGROUND_COLOR, fg = TEXT_COLOR, highlightbackground=BORDER_COLOR_INACTIVE, text = "↑", width = 3)
 	forward_button.grid(row=0, column=1, padx = 2, pady = 2)
 	forward_button.config(command = forward_button_click)
 	
-	backwards_button = Button(button_frame, font=(BUTTON_FONT, BUTTON_FONT_SIZE), bg = BUTTON_BACKGROUND_COLOR, fg = TEXT_COLOR, highlightbackground=BORDER_COLOR_INACTIVE, text = "⇩", width = 3)
+	backwards_button = Button(button_frame, font=(BUTTON_FONT, BUTTON_FONT_SIZE), bg = BUTTON_BACKGROUND_COLOR, fg = TEXT_COLOR, highlightbackground=BORDER_COLOR_INACTIVE, text = "↓", width = 3)
 	backwards_button.grid(row=2, column=1, padx = 2, pady = 2)
 	backwards_button.config(command = backwards_button_click)
 
-	right_button = Button(button_frame, font=(BUTTON_FONT, BUTTON_FONT_SIZE), bg = BUTTON_BACKGROUND_COLOR, fg = TEXT_COLOR, highlightbackground=BORDER_COLOR_INACTIVE, text = "⇨", width = 3)
+	right_button = Button(button_frame, font=(BUTTON_FONT, BUTTON_FONT_SIZE), bg = BUTTON_BACKGROUND_COLOR, fg = TEXT_COLOR, highlightbackground=BORDER_COLOR_INACTIVE, text = "→", width = 3)
 	right_button.grid(row=1, column=2, padx = 2, pady = 2)
 	right_button.config(command = right_button_click)
 
-	left_button = Button(button_frame, font=(BUTTON_FONT, BUTTON_FONT_SIZE), bg = BUTTON_BACKGROUND_COLOR, fg = TEXT_COLOR, highlightbackground=BORDER_COLOR_INACTIVE, text = "⇦", width = 3)
+	left_button = Button(button_frame, font=(BUTTON_FONT, BUTTON_FONT_SIZE), bg = BUTTON_BACKGROUND_COLOR, fg = TEXT_COLOR, highlightbackground=BORDER_COLOR_INACTIVE, text = "←", width = 3)
 	left_button.grid(row=1, column=0, padx = 2, pady = 2)
 	left_button.config(command = left_button_click)
 
-	flashlight_button = Button(button_frame, font=(BUTTON_FONT, BUTTON_FONT_SIZE), bg = BUTTON_BACKGROUND_COLOR, fg = TEXT_COLOR, highlightbackground=BORDER_COLOR_ACTIVE, text = "", width = 3)
+	flashlight_button = Button(button_frame, font=(BUTTON_FONT, BUTTON_FLASHLIGHT_FONT_SIZE), bg = BUTTON_BACKGROUND_COLOR, fg = TEXT_COLOR, highlightbackground=BORDER_COLOR_ACTIVE, text = "🗲", width = 3)
 	flashlight_button.grid(row=1, column=1)
+	flashlight_button.config(command = lambda: perform_use_command("flashlight"))
 	
 	inventory_widget = Text(root, bg = TEXT_BOX_BACKGROUND_COLOR, fg = TEXT_COLOR, highlightbackground=BORDER_COLOR_INACTIVE, highlightcolor=BORDER_COLOR_ACTIVE, width = (30 if PORTRAIT_LAYOUT else 38), height = (8 if PORTRAIT_LAYOUT else 6), relief = GROOVE , state=DISABLED )
 	if (PORTRAIT_LAYOUT):
@@ -843,6 +851,7 @@ def set_current_state():
 		backwards_button.config(state = "disabled")
 		left_button.config(state = "disabled")
 		right_button.config(state = "disabled")
+		flashlight_button.config(state = "disabled")
 
 	refresh_location = False
 	refresh_objects_visible = False
