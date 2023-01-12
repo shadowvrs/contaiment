@@ -37,8 +37,7 @@ BORDER_COLOR_ACTIVE = "#c8c8c8"
 TEXT_COLOR = "white"
 
 BUTTON_FONT = "sans serif"
-BUTTON_FONT_SIZE = 15
-BUTTON_FLASHLIGHT_FONT_SIZE = 13
+BUTTON_FONT_SIZE = 12
 
 DOWNLOAD_INFO = """
 Download Complete!
@@ -47,35 +46,35 @@ Download Complete!
 Displaying file objective.tnxt
 
 ---Goal---
-As you may know, your task is to retrive data logs on subject #01482, if you succeed you will be rewarded handsomely.
+Your task is to retrive data logs stored on the server in this facility, if you succeed you will be rewarded handsomely.
 
 ---Safety---
-To avoid any containment breeches, you will be sealed into the facility apon entering. The entrance will be unsealed once you have successfully uploaded the data logs on subject #01482 to our servers.
+To avoid any containment breaches, you will be sealed in upon entering. The entrance will be unsealed once you have successfully grabbed the logs.
 
 ---Help---
-If you ever feel you don't quite understand something, think of "help" and your neural implante will feed you answers.\n
+If you ever feel like you don't quite understand something, think of "help" and your neural implant will feed you answers.\n
 """
 
 HELP_INFO = """
 \nDisplaying file help.tnxt
 
 ---Movement---
-If you wish to move with commands, type in the first lettre of the direction you wish to go in, so f for forward, l for left, etc.
+Type in the first letter of the direction you wish to go in, so f for forward, l for left, etc. You may also use wasd to move, if you wish.
 
 ---Picking up objects---
 To pick up any objects, use get or grab.
 
 ---Placing objects---
-To put down objects, use put or place.
+To put down objects or put an object into something, use put or place.
 
----Getting info on objects or Places--- 
-To get more description on an object, use look or describe.
+---Getting info on objects or Places---
+To get more description on an object, use look or describe command.
 
 ---Looking for objects---
-You can find objects on people or things if you use the examine command.
+You can find objects on people or things using the examine command.
 
 ---Using objects---
-You can use the command use to use an object. Like for example, turning off and on a flashlight.
+You can use the command use to use an object. ex: turning off and on a flashlight.
 """
 
 ENTITY_INFO = """
@@ -85,13 +84,14 @@ Risk level: 9
 Origin: Unkown
 Height: Dynamic
 
-Tests on subject #01482 have shwon that it is by far one of the most dangerous subjects contained in this facility.
-During tests, subject demonstarted the abilites to exist in multiple locations at once and cause madness to nearby organismes.
-The adsence of light seems to have a calming affect on the subject, whilst light aggravates it to an extreme.
-If subject was to breach containment, it could be disastrous, it is recomended to incresse measure of containment.
+Tests on subject #01482 have shown that it is by far one of the most dangerous subjects contained in this facility.
+During tests, subject demonstrated the abilites to exist in multiple locations, disrupt electronics and cause madness to nearby organisms.
+The absence of light seems to have a calming affect on the subject, whilst light seems to aggravate it to an extreme.
+This subject also appears to be constantly distant from the reasurch being done on them, almost like they're day dreaming.
+More research and test are required on this subject.
 """
 
-TIP_NOTE_INFO = "Lock the doors and turn off the power immediately it won't be able to any of us in the dark, wait for me at the exit."
+TIP_NOTE_INFO = "Lock the doors and turn off the power immediately it won't be able to see any of us in the dark, wait for me at the exit."
 
 command_widget = None
 image_label = None
@@ -110,15 +110,16 @@ power = False
 light = False
 first_time_entity_activates = True
 first_time_using_breaker = True
-end_of_game = False
+dead = False
 tunnel_created = False
 desktop_been_used = False
-final_screen = False
+final_areas = False
 
 current_location = ENTRANCE
 turns_in_room_with_entity = 0
 turns_entity_is_inactivate = 5
 new_tab = 2
+
 if os.name == "posix":
 	url_jumpscare = "pages/index.html"
 	path_to_file = os.path.expanduser("~/Desktop")
@@ -134,16 +135,16 @@ file_name = "security_codes.txt"
 flashlight = GameObject.GameObject("Flashlight", 0, True, True, True, False, "A small flashlight that emits a faint light.")
 usb = GameObject.GameObject("USB", 0, True, True, True, False, "A small 32 gigabyte USB, given to you by <<REDACTED>>. It has just enough space for the logs.")
 
-tablet = GameObject.GameObject("Tablet", 0, True, True, False, False, "A small stone tablet with strange symboles carved in around a hole directly in the middel of the tablet.")
-acid_jar = GameObject.GameObject("Container of Acid", 0, True, True, False, False, "A small metal container containg acid.")
+tablet = GameObject.GameObject("Tablet", 0, True, True, False, False, "A small stone tablet with strange symbols carved around a hole directly in the middle of the tablet.")
+acid_jar = GameObject.GameObject("Container of Acid", 0, True, True, False, False, "A small metal container containing acid.")
 
-debris_one = GameObject.GameObject("Debris", PATHWAY_FIVE, False, True, False, False, "Debris from the celling fills the passage ahead, if you look closely through the gaps in the rocks and boulders, you're able to see a opening into another room, you might be able to get there if you could only find a way to remove the rocks.")
+debris_one = GameObject.GameObject("Debris", PATHWAY_FIVE, False, True, False, False, "Debris from the celling fills the passage ahead, if you look closely through the gaps in the rocks and boulders, you're able to see an opening into another room, you might be able to get there if you could only find a way to remove the rocks.")
 debris_two = GameObject.GameObject("Debris", PATHWAY_SIX, False, True, False, False, "Debris from the celling fills the passage ahead.")
 
-breaker = GameObject.GameObject("Breaker", BREAKER_ROOM, False, True, False, False, "A old rusty breaker, it could be used to turn on the power.")
-shelve = GameObject.GameObject("Shelve", STORAGE_ROOM, False, True, False, False, "A old shelve containing several aged tools, items and products.")
-desktop_office = GameObject.GameObject("Desktop", OFFICE, False, True, False, False, "A old triple monitor computer, it requires a password and a username to get into it.")
-desktop_server_room = GameObject.GameObject("Desktop", SERVER_ROOM, False, True, False, False, "A old computer hooked up to a server containing all files on this facility.")
+breaker = GameObject.GameObject("Breaker", BREAKER_ROOM, False, True, False, False, "An old rusty breaker, it could be used to turn on the power.")
+shelve = GameObject.GameObject("Shelve", STORAGE_ROOM, False, True, False, False, "An old shelve containing several aged tools, items and products.")
+desktop_office = GameObject.GameObject("Desktop", OFFICE, False, True, False, False, "An old triple monitor computer, it requires a password and a username to get into it.")
+desktop_server_room = GameObject.GameObject("Desktop", SERVER_ROOM, False, True, False, False, "An old computer hooked up to a server containing all files on this facility.")
 securit_keypad = GameObject.GameObject("Keypad", PATHWAY_TWO, False, True, False, False, "A small keypad requiring a four digit code.")
 
 door_pathway_one = GameObject.GameObject("Door", PATHWAY_ONE, False, True, False, False, "A metal plated door, there is no way you're going to break it.")
@@ -154,8 +155,8 @@ corpse_two = GameObject.GameObject("Corpse", PATHWAY_THREE, False, True, False, 
 corpse_three = GameObject.GameObject("Corpse", PATHWAY_FIVE, False, True, False, False, "A dead body with claw marks covering them.")
 corpse_four = GameObject.GameObject("Corpse", CONFERENCE_ROOM, False, True, False, False, "A dead body with claw marks covering them.")
 
-tip_note = GameObject.GameObject("Sticky Note", 0, True, True, False, False, "A small pice of paper with nothing on it, unless viewed through the tablet.")
-note_login_info = GameObject.GameObject("Password Note", 0, True, True, False, False, "A small pice of paper with a passcode written on it.")
+tip_note = GameObject.GameObject("Sticky Note", 0, True, True, False, False, "A small piece of paper with nothing on it, unless viewed through the tablet.")
+note_login_info = GameObject.GameObject("Password Note", 0, True, True, False, False, "A small piece of paper with a passcode written on it.")
 
 notes_entity = GameObject.GameObject("Entity Notes", 0, True, False, False, False, "Lab notes on a subject of this facility.")
 
@@ -210,7 +211,7 @@ def perform_go_command(direction):
 		else:
 			can_entity_kill()
 
-			if end_of_game == False:
+			if dead == False:
 				current_location = new_location
 				refresh_location = True
 				turns_in_room_with_entity = 0
@@ -246,7 +247,7 @@ def perform_get_command(object_name):
 
 def perform_put_command(object_name):
 	global light
-	global final_screen
+	global final_areas
 	global turns_in_room_with_entity
 	global refresh_objects_visible
 
@@ -258,7 +259,7 @@ def perform_put_command(object_name):
 				print_to_description("You can't put down that object.\n")
 			elif game_object == usb and desktop_server_room.location == current_location:
 				print_to_description("You put the usb into the desktop and grab all the files retaining to <<REDACTED>>.\n")
-				final_screen = True
+				final_areas = True
 			else:
 				#put down the object
 				game_object.location = current_location
@@ -311,20 +312,20 @@ def perform_read_command(object_name):
 	if not (game_object is None):
 		if (game_object == notes_entity):
 			if (notes_entity.carried):
-				print_to_description("You read on the note:\n" + ENTITY_INFO)
+				print_to_description("You read the note:\n" + ENTITY_INFO)
 			elif (notes_entity.visible):
 				print_to_description("You can't read it from a distance.\n")
 			else:
 				print_to_description("Object does not exist.\n")
 		elif (game_object == note_login_info) and (note_login_info.carried):
-				print_to_description("You read on the card:\nUsername: Connar\nPassword: 0451\n")
+				print_to_description("You read the card:\nUsername: Connar\nPassword: 0451\n")
 		elif (game_object == tip_note) and (tip_note.carried):
-			print_to_description("You read on the sticky note:\n" + TIP_NOTE_INFO)
+			print_to_description("You read the sticky note:\n" + TIP_NOTE_INFO)
 		else:
 			if ((game_object.visible == False) and (game_object.carried == False)):
 				print_to_description("Object does not exist.\n")
 			else:
-				print_to_description("There is nothing to read on that object.\n")
+				print_to_description("There is nothing to read that object.\n")
 	else:
 		print_to_description("Object does not exist.\n")
 
@@ -336,14 +337,14 @@ def perform_examine_command(object_name):
 	if not (game_object is None) and game_object.visible:
 		if game_object.examined == False:
 			if game_object == shelve:
-				print_to_description("You search the shelve hoping to find a weapon, but instead you find a metal jar of industriel acid.\n")
+				print_to_description("You search the shelve hoping to find a weapon, but instead you find a metal container of industrial acid.\n")
 				acid_jar.carried = True
 			elif game_object == corpse_one:
-				print_to_description("You examine the corpse and find a small stone tablet with strange symboles carved in around a hole directly in the middel of it and a small note. You bring the tablet to your eye and are suddenly able to see words on the note, it reads: " + TIP_NOTE_INFO + " you put the tablet and the note into your inventory.\n")
+				print_to_description("You examine the corpse and find a small stone tablet with strange symbols carved around a hole directly in the middle of it and a small sticky note with nothing written on it. You look through the hole in the middle of the tablet, and are suddenly able to see words on the sticky note. You put the tablet and the note into your inventory.\n")
 				tablet.carried = True
 				tip_note.carried = True
 			elif game_object == corpse_four:
-				print_to_description("You examine the corpse and find a small pice of paper with a username and a passcode wirtten on it.\n")
+				print_to_description("You examine the corpse and find a small piece of paper with a username and password written on it.\n")
 				note_login_info.carried = True
 			else:
 				print_to_description("You don't find anything.\n")
@@ -362,6 +363,8 @@ def perform_use_command(object_name):
 	global first_time_using_breaker
 	global desktop_been_used
 
+	user_response = None
+
 	game_object = get_game_object(object_name)
 
 	if not (game_object is None) and game_object.visible:
@@ -377,25 +380,25 @@ def perform_use_command(object_name):
 			set_current_image()
 		elif game_object == tablet and game_object.carried:
 			if light:
-				if notes_entity.visible == False and notes_entity.location == current_location:
-					notes_entity.visible = True
-					print_to_description("You bring the tablet to your eye and see lab notes scattered on the ground.\n")
-				elif desktop_been_used and desktop_office.location == current_location:
-					print_to_description("You bring the tablet to your eye and are suddenly able to see a passcode inside the file.\n")
+				if desktop_been_used and desktop_office.location == current_location:
+					print_to_description("You look through the tablet and are able to see text appear in the file.\n")
 					try:
 						with open(os.path.join(path_to_file, file_name), 'a') as game:
 							game.write("\nServer room code: 2367")
 					except:
 						with open(os.path.join(path_to_file, file_name), 'a') as game:
 							game.write("\nServer room code: 2367")
+				elif notes_entity.visible == False and notes_entity.location == current_location:
+					notes_entity.visible = True
+					print_to_description("You look through the tablet and see lab notes scattered on the ground.\n")
 				else:
-					print_to_description("You bring the tablet to your eye, but you don't see anything in the room.\n")					
+					print_to_description("You look through the tablet, but you don't see anything new in the room.\n")					
 			else:
 				print_to_description("It's too dark to see through the tablet.\n")
 		elif game_object == breaker:
 			if light:
 				if first_time_using_breaker:
-					print_to_description("ERROR: unknown access to neural implant.\nYou flip the switches on the breaker, all power is restored.\nYou hear a loud scream from the halls, it pirces your ears causing them to start bleeding.\n")
+					print_to_description("ERROR: unknown access to neural implant.\nYou flip the switches on the breaker, all power is restored.\n")
 					try:
 						webbrowser.open(url_jumpscare, new=new_tab)
 					except:
@@ -412,16 +415,14 @@ def perform_use_command(object_name):
 			if light:
 				if desktop_been_used == False:
 					if note_login_info.carried:
-						print_to_description("You put in the login info you aquired from the dead body. The computer boots up, you scower around the desktop only to find a file on the desktop named 'security_codes.txt'.")
-						try:
-							with open(os.path.join(path_to_file, file_name), 'w') as game:
-								game.write("Use the all seeing eye.")
-						except:
-							with open(os.path.join("", file_name), 'w') as game:
-								game.write("Use the all seeing eye.")
-						desktop_been_used = True
+						use_desktop()
 					else:
-						print_to_description("You don't know the login info.\n")
+						user_response = simpledialog.askstring("Containment", "Enter Passcode", parent=root)
+
+						if user_response == "0451":
+							use_desktop()
+						else:
+							print_to_description("The computer denies the passcode.")
 				else:
 					print_to_description("You are already login into the computer.\n")
 			else:
@@ -435,7 +436,7 @@ def perform_use_command(object_name):
 
 				if not (new_game_object is None):
 					if new_game_object == debris_one:
-						print_to_description("Little by little, you pour the acid onto the rocks and boulders till you're able to make a very unstable tunnel that you can barley fit in.\n")
+						print_to_description("Little by little, you pour the acid onto the rocks and boulders until you're able to make a very unstable tunnel that you can barely fit in.\n")
 						tunnel_created = True
 						acid_jar.carried = False
 						acid_jar.location = 0
@@ -453,12 +454,15 @@ def perform_use_command(object_name):
 				print_to_description("It's probably not a good idea to use a jar of acid in the dark.\n")
 		elif game_object == securit_keypad:
 			if light:
-				user_response_passcode = simpledialog.askstring("Containment", "Enter passcode", parent=root)
-				if user_response_passcode == "2367":
-					print_to_description("You put the password into the keypad. The door immediately opens.\n")
-					door_pathway_two.visible = False
+				if power:
+					user_response = simpledialog.askstring("Containment", "Enter passcode", parent=root)
+					if user_response == "2367":
+						print_to_description("You put the password into the keypad. The door immediately opens.\n")
+						door_pathway_two.visible = False
+					else:
+						print_to_description("The keypad flashes red, you put in the wrong code.\n")
 				else:
-					print_to_description("The keypad flashes red, you put in the wrong code.\n")
+					print_to_description("You try to use the keypad, but it doesn't have any power.\n")
 			else:
 				print_to_description("You can't use the keypad in the dark.")
 		else:
@@ -492,10 +496,9 @@ def describe_current_location():
 	elif (current_location == BREAKER_ROOM):
 		current_room = "Breaker Room"
 	elif (current_location == VOID_ONE) or (current_location == VOID_TWO) or (current_location == VOID_THREE) or (current_location == VOID_FOUR):
+		flashlight_button.config(state = "disabled")
 		current_room = "???"
-		if (current_location == VOID_THREE):
-			print_to_description("I have been trabed in here for so long, memories and pain given to me only for the enjoymentof others.\nI am done now... no more pain, no more containment.")
-		elif (current_location == VOID_FOUR):
+		if (current_location == VOID_FOUR):
 			delete_everything()
 	else:
 		current_room = "Unknown location:" + current_location
@@ -503,7 +506,7 @@ def describe_current_location():
 	print_to_description("Location: " + current_room)
 	
 def set_current_image():
-	if end_of_game == False:
+	if dead == False:
 		if light:
 			if entity_one.location == current_location or entity_two.location == current_location:
 				if (current_location == ENTRANCE):
@@ -520,7 +523,7 @@ def set_current_image():
 				elif (current_location == SERVER_ROOM):
 					image_label.img = PhotoImage(file = "res/entity/server_room.gif")
 				elif (current_location == PATHWAY_TWO):
-					if door_pathway_two.visible:
+					if door_pathway_two.visible or not (power):
 						image_label.img = PhotoImage(file = "res/entity/pathway_two.gif")
 					else:
 						image_label.img = PhotoImage(file = "res/entity/pathway_two_door_open.gif")
@@ -553,7 +556,7 @@ def set_current_image():
 				elif (current_location == SERVER_ROOM):
 					image_label.img = PhotoImage(file = "res/normal/server_room.gif")
 				elif (current_location == PATHWAY_TWO):
-					if door_pathway_two.visible:
+					if door_pathway_two.visible or not (power):
 						image_label.img = PhotoImage(file = "res/normal/pathway_two.gif")
 					else:
 						image_label.img = PhotoImage(file = "res/normal/pathway_two_door_open.gif")
@@ -590,7 +593,7 @@ def set_current_image():
 	image_label.config(image = image_label.img)
 		
 def get_location_forward():
-	if final_screen == False:
+	if final_areas == False:
 		if (current_location == ENTRANCE):
 			return PATHWAY_ONE
 		elif (current_location == PATHWAY_ONE):
@@ -600,6 +603,7 @@ def get_location_forward():
 		elif (current_location == PATHWAY_FOUR):
 			return BREAKER_ROOM
 		elif (current_location == PATHWAY_FIVE) and (tunnel_created):
+			print_to_description("You're barely able to move, but you slowly manage to crawl through the narrow tunnel of your creation.")
 			return TUNNEL
 		elif (current_location == TUNNEL):
 			return PATHWAY_SIX
@@ -609,6 +613,7 @@ def get_location_forward():
 		if current_location == VOID_ONE:
 			return VOID_TWO
 		elif current_location == VOID_TWO:
+			print_to_description("I have been trapped in here for so long, memories and pain given to me only for the enjoyment of others.\nI am done now... no more pain, no more containment.")
 			return VOID_THREE
 		elif current_location == VOID_THREE:
 			return VOID_FOUR
@@ -637,7 +642,7 @@ def get_location_backward():
 	elif (current_location == TUNNEL):
 		return PATHWAY_FIVE
 	elif (current_location == SERVER_ROOM):
-		return PATHWAY_TWO if not final_screen else VOID_ONE
+		return PATHWAY_TWO if not final_areas else VOID_ONE
 	elif (current_location == OFFICE):
 		return PATHWAY_ONE
 	else:
@@ -656,7 +661,7 @@ def get_location_left():
 		return OFFICE 
 	elif (current_location == PATHWAY_THREE):
 		return PATHWAY_FOUR
-	elif (current_location == PATHWAY_TWO) and (door_pathway_two.visible == False):
+	elif (current_location == PATHWAY_TWO) and (door_pathway_two.visible == False) and (power):
 		return SERVER_ROOM
 	elif (current_location == PATHWAY_SIX):
 		return CONFERENCE_ROOM
@@ -697,7 +702,7 @@ def describe_current_inventory():
 			object_list = object_list + (", " if object_count > 0 else "") + current_object.name
 			object_count = object_count + 1
 	
-	inventory = "---Invertory---\nYou are carrying:\n" + (object_list if object_count > 0 else "nothing")
+	inventory = "---Inventory---\nYou are carrying:\n" + (object_list if object_count > 0 else "Nothing")
 	
 	inventory_widget.config(state = "normal")
 	inventory_widget.delete(1.0, END)
@@ -710,20 +715,30 @@ def print_to_description(output, user_input=False):
 	description_widget.config(state = 'disabled')
 	description_widget.see(END)
 
+def use_desktop():
+	print_to_description("You put in the login info from the dead body into the computer. You login and immediately start scowering for anything useful, eventually you find an odd file on computers desktop named 'security_codes.txt'.\n")
+	try:
+		with open(os.path.join(path_to_file, file_name), 'w') as game:
+			game.write("Use the all seeing eye.")
+	except:
+		with open(os.path.join("", file_name), 'w') as game:
+			game.write("Use the all seeing eye.")
+	desktop_been_used = True
+
 def assign_random_room():
 	room = random.randrange(ENTRANCE, TUNNEL)
 	return room
 
 def can_entity_kill():
-	global end_of_game
+	global dead
 	global first_time_entity_activates
 	global turns_in_room_with_entity
 	global turns_entity_is_inactivate
 
 	if current_location == entity_one.location or current_location == entity_two.location:
 		if light and turns_in_room_with_entity >= 1:
-			print_to_description("With one quick slash from ???, you fall to the ground, dead.")
-			end_of_game = True
+			print_to_description("With one quick slash, you fall to the ground, dead.")
+			dead = True
 			set_current_state()
 		else:
 			entity_one.location = 0
@@ -732,7 +747,7 @@ def can_entity_kill():
 	else:
 		if turns_entity_is_inactivate <= 0:
 			if first_time_entity_activates:
-				print_to_description("You hear a loud scream ehcoing from the halls.\n")
+				print_to_description("You hear a loud scream echoing from the halls.\n")
 				first_time_entity_activates = False
 
 			entity_one.location = assign_random_room()
@@ -753,7 +768,7 @@ def delete_everything():
 	with open(os.path.join("", "credits.txt"), 'w') as game:
 		game.write("Created by: Cole K")
 	if os.name == "posix":
-		os.system("rm containment.py && rm GameObject.py && rm -r pages && rm -r res && rm __pycache__")
+		os.system("rm containment.py && rm GameObject.py && rm -r pages && rm -r res && rm -r __pycache__")
 	elif os.name == "nt":
 		os.system("del containment.py & del GameObject.py & rmdir /Q /S pages & rmdir /Q /S res && rmdir /Q /S __pycache__")
 	else:
@@ -821,7 +836,7 @@ def build_interface():
 	left_button.grid(row=1, column=0, padx = 2, pady = 2)
 	left_button.config(command = left_button_click)
 
-	flashlight_button = Button(button_frame, font=(BUTTON_FONT, BUTTON_FLASHLIGHT_FONT_SIZE), bg = BUTTON_BACKGROUND_COLOR, fg = TEXT_COLOR, highlightbackground=BORDER_COLOR_ACTIVE, text = "🗲", width = 3)
+	flashlight_button = Button(button_frame, font=(BUTTON_FONT, BUTTON_FONT_SIZE), bg = BUTTON_BACKGROUND_COLOR, fg = TEXT_COLOR, highlightbackground=BORDER_COLOR_ACTIVE, text = "🗲", width = 3)
 	flashlight_button.grid(row=1, column=1)
 	flashlight_button.config(command = lambda: perform_use_command("flashlight"))
 	
@@ -835,7 +850,7 @@ def set_current_state():
 	global refresh_location
 	global refresh_objects_visible
 
-	if (end_of_game == False):
+	if (dead == False):
 		if (refresh_location):
 			describe_current_location()
 			set_current_image()
@@ -883,10 +898,10 @@ def return_key_enter(event):
 
 def set_directions_to_move():
 
-	move_to_north = (get_location_forward() > 0) and (end_of_game == False)
-	move_to_south = (get_location_backward() > 0) and (end_of_game == False)
-	move_to_east = (get_location_right() > 0) and (end_of_game == False)
-	move_to_west = (get_location_left() > 0) and (end_of_game == False)
+	move_to_north = (get_location_forward() > 0) and (dead == False)
+	move_to_south = (get_location_backward() > 0) and (dead == False)
+	move_to_east = (get_location_right() > 0) and (dead == False)
+	move_to_west = (get_location_left() > 0) and (dead == False)
 	
 	forward_button.config(state = ("normal" if move_to_north else "disabled"))
 	backwards_button.config(state = ("normal" if move_to_south else "disabled"))
