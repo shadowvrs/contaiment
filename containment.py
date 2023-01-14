@@ -85,7 +85,7 @@ Origin: Unkown
 Height: Dynamic
 
 Tests on subject #01482 have shown that it is by far one of the most dangerous subjects contained in this facility.
-During tests, subject demonstrated the abilites to exist in multiple locations, disrupt electronics and cause madness to nearby organisms.
+During tests, subject demonstrated the abilites to exist in multiple locations, disrupt electronics and cause madness to organisms after prolonged exposure.
 The absence of light seems to have a calming affect on the subject, whilst light seems to aggravate it to an extreme.
 This subject also appears to be constantly distant from the reasurch being done on them, almost like they're day dreaming.
 More research and test are required on this subject.
@@ -116,9 +116,10 @@ desktop_been_used = False
 final_areas = False
 
 current_location = ENTRANCE
-turns_in_room_with_entity = 0
 turns_entity_is_inactivate = 5
+flashlight_power = 10
 new_tab = 2
+turns_in_room_with_entity = 0
 
 if os.name == "posix":
 	url_jumpscare = "pages/index.html"
@@ -132,7 +133,7 @@ else:
 
 file_name = "security_codes.txt"
 
-flashlight = GameObject.GameObject("Flashlight", 0, True, True, True, False, "A small flashlight that emits a faint light.")
+flashlight = GameObject.GameObject("Flashlight", 0, True, True, True, False, "A small flashlight with little battery that emits a faint light.")
 usb = GameObject.GameObject("USB", 0, True, True, True, False, "A small 32 gigabyte USB, given to you by <<REDACTED>>. It has just enough space for the logs.")
 
 tablet = GameObject.GameObject("Tablet", 0, True, True, False, False, "A small stone tablet with strange symbols carved around a hole directly in the middle of the tablet.")
@@ -160,12 +161,19 @@ note_login_info = GameObject.GameObject("Password Note", 0, True, True, False, F
 
 notes_entity = GameObject.GameObject("Entity Notes", 0, True, False, False, False, "Lab notes on a subject of this facility.")
 
+battery_one = GameObject.GameObject("Battery", 0, True, True, False, False, "A small battery with barely any charge left.")
+battery_two = GameObject.GameObject("Battery", 0, True, True, False, False, "A small battery with barely any charge left.")
+battery_three = GameObject.GameObject("Battery", 0, True, True, False, False, "A small battery with barely any charge left.")
+battery_four = GameObject.GameObject("Battery", 0, True, True, False, False, "A small battery with barely any charge left.")
+battery_five = GameObject.GameObject("Battery", ENTRANCE, True, True, False, False, "A small battery with barely any charge left.")
+battery_six = GameObject.GameObject("Battery", OFFICE, True, True, False, False, "A small battery with barely any charge left.")
+
 entity_one = GameObject.GameObject("???", 0, False, True, False, False, "???")
 entity_two = GameObject.GameObject("???", 0, False, True, False, False, "???")
 
 game_objects = [usb, flashlight, shelve, breaker, desktop_office, desktop_server_room, securit_keypad, debris_one, debris_two, 
 door_pathway_one, door_pathway_two, corpse_one, corpse_two, corpse_three, corpse_four, tablet, acid_jar, tip_note, note_login_info,
-notes_entity, entity_one, entity_two]
+notes_entity, entity_one, entity_two, battery_one, battery_two, battery_three, battery_four, battery_five, battery_six]
 
 def perform_command(verb, noun):
 	if verb == "F" or verb == "B" or verb == "R" or verb == "L" or verb == "W" or verb == "S" or verb == "A" or verb == "D":
@@ -209,7 +217,7 @@ def perform_go_command(direction):
 		if (new_location == 0):
 			print_to_description("You can't go that way.\n")
 		else:
-			can_entity_kill()
+			determine_flashlight_power()
 
 			if dead == False:
 				current_location = new_location
@@ -219,13 +227,14 @@ def perform_go_command(direction):
 			set_current_state()
 	else:
 		print_to_description("It's too dark to move.\n")
+	
 
 def perform_get_command(object_name):
 	global light
 	global refresh_objects_visible
 
-	game_object = get_game_object(object_name)
-	
+	game_object = get_game_object(object_name, True)
+
 	if light:
 		if not (game_object is None):
 			if (game_object.location != current_location or game_object.visible == False):
@@ -235,7 +244,6 @@ def perform_get_command(object_name):
 			else:
 				#pick up the object
 				game_object.carried = True
-				game_object.visible = False
 				refresh_objects_visible = True
 				print_to_description("You picked up " + object_name.lower() + ".\n")
 		else:
@@ -251,7 +259,7 @@ def perform_put_command(object_name):
 	global turns_in_room_with_entity
 	global refresh_objects_visible
 
-	game_object = get_game_object(object_name)
+	game_object = get_game_object(object_name, False, True)
 	
 	if light:
 		if not (game_object is None) and (game_object.carried):
@@ -337,12 +345,19 @@ def perform_examine_command(object_name):
 	if not (game_object is None) and game_object.visible:
 		if game_object.examined == False:
 			if game_object == shelve:
-				print_to_description("You search the shelve hoping to find a weapon, but instead you find a metal container of industrial acid.\n")
+				print_to_description("You search the shelve hoping to find a weapon, but instead you find a metal container of industrial acid and a battery.\n")
 				acid_jar.carried = True
+				battery_three.carried = True
+			elif game_object == debris_two:
+				print_to_description("You examine the pile and find a battery under one of the rocks.\n")
+				battery_two.carried = True
 			elif game_object == corpse_one:
 				print_to_description("You examine the corpse and find a small stone tablet with strange symbols carved around a hole directly in the middle of it and a small sticky note with nothing written on it. You look through the hole in the middle of the tablet, and are suddenly able to see words on the sticky note. You put the tablet and the note into your inventory.\n")
 				tablet.carried = True
 				tip_note.carried = True
+			elif game_object == corpse_three:
+				print_to_description("You examine the corpse and find a battery.\n")
+				battery_one.carried = True
 			elif game_object == corpse_four:
 				print_to_description("You examine the corpse and find a small piece of paper with a username and password written on it.\n")
 				note_login_info.carried = True
@@ -357,11 +372,13 @@ def perform_examine_command(object_name):
 
 
 def perform_use_command(object_name):
-	global light
 	global power
+	global flashlight_power
+	global light
 	global tunnel_created
 	global first_time_using_breaker
 	global desktop_been_used
+	global flashlight_power
 
 	user_response = None
 
@@ -376,7 +393,7 @@ def perform_use_command(object_name):
 			else:
 				light = True
 				print_to_description("You turn on the light.\n")
-				
+
 			set_current_image()
 		elif game_object == tablet and game_object.carried:
 			if light:
@@ -395,6 +412,19 @@ def perform_use_command(object_name):
 					print_to_description("You look through the tablet, but you don't see anything new in the room.\n")					
 			else:
 				print_to_description("It's too dark to see through the tablet.\n")
+		elif (game_object == battery_one) or (game_object == battery_two) or (game_object == battery_three) or (game_object == battery_four) or (game_object == battery_five) or (game_object == battery_six):
+			flashlight_power += 6
+
+			if flashlight_power > 10:
+				flashlight_power = 10
+				print_to_description("You replace the old battery with a new one, your flashlight's battery is now at 100%.\n")
+			else:
+				print_to_description("You replace the old battery with a new one.\n")
+				determine_flashlight_power()
+
+			game_object.carried = False
+			game_object.location = 0
+
 		elif game_object == breaker:
 			if light:
 				if first_time_using_breaker:
@@ -471,6 +501,7 @@ def perform_use_command(object_name):
 		if game_object != flashlight:
 			can_entity_kill()
 	else:
+		print("this ran")
 		print_to_description("Specify which object to use.\n")
 
 def perform_help_command():
@@ -493,11 +524,14 @@ def describe_current_location():
 		current_room = "Conference Room"
 	elif (current_location == TUNNEL):
 		current_room = "Tunnel"
+		print_to_description("You're barely able to move, but you slowly manage to crawl through the narrow tunnel of your creation.")
 	elif (current_location == BREAKER_ROOM):
 		current_room = "Breaker Room"
 	elif (current_location == VOID_ONE) or (current_location == VOID_TWO) or (current_location == VOID_THREE) or (current_location == VOID_FOUR):
 		flashlight_button.config(state = "disabled")
 		current_room = "???"
+		if (current_location) == VOID_THREE:
+			print_to_description("I have been trapped in here for so long, memories and pain given to me only for the enjoyment of others.\nI am done now... no more pain, no more containment.")
 		if (current_location == VOID_FOUR):
 			delete_everything()
 	else:
@@ -603,7 +637,6 @@ def get_location_forward():
 		elif (current_location == PATHWAY_FOUR):
 			return BREAKER_ROOM
 		elif (current_location == PATHWAY_FIVE) and (tunnel_created):
-			print_to_description("You're barely able to move, but you slowly manage to crawl through the narrow tunnel of your creation.")
 			return TUNNEL
 		elif (current_location == TUNNEL):
 			return PATHWAY_SIX
@@ -613,7 +646,6 @@ def get_location_forward():
 		if current_location == VOID_ONE:
 			return VOID_TWO
 		elif current_location == VOID_TWO:
-			print_to_description("I have been trapped in here for so long, memories and pain given to me only for the enjoyment of others.\nI am done now... no more pain, no more containment.")
 			return VOID_THREE
 		elif current_location == VOID_THREE:
 			return VOID_FOUR
@@ -668,15 +700,26 @@ def get_location_left():
 	else:
 		return 0
 		
-def get_game_object(object_name):
+def get_game_object(object_name, only_check_object_location=False, only_check_object_carried=False):
 	sought_object = None
 	for current_object in game_objects:
 		if (current_object.name.upper() == object_name.upper()):
 			sought_object = current_object
-			if (current_location == sought_object.location) or sought_object.carried:
-				break
+			if only_check_object_location == True:
+				if (current_location == sought_object.location):
+					break
+				else:
+					sought_object = None
+			elif only_check_object_carried == True:
+				if sought_object.carried:
+					break
+				else:
+					sought_object = None
 			else:
-				sought_object = None
+				if (current_location == sought_object.location) or sought_object.carried:
+					break
+				else:
+					sought_object = None
 
 	return sought_object
 
@@ -725,19 +768,61 @@ def use_desktop():
 			game.write("Use the all seeing eye.")
 	desktop_been_used = True
 
+def determine_flashlight_power():
+	global flashlight_power
+	global light
+	global turns_in_room_with_entity
+
+	current_power = "100%"
+
+	if not current_location >= VOID_ONE:
+		flashlight_power -= 1
+
+		if flashlight_power == 9:
+			current_power = "90%"
+		elif flashlight_power == 8:
+			current_power = "80%"
+		elif flashlight_power == 7:
+			current_power = "70%"
+		elif flashlight_power == 6:
+			current_power = "60%"
+		elif flashlight_power == 5:
+			current_power = "50%"
+		elif flashlight_power == 4:
+			current_power = "40%"
+		elif flashlight_power == 3:
+			current_power = "30%"
+		elif flashlight_power == 2:
+			current_power = "20%"
+		elif flashlight_power == 1:
+			current_power = "10%"
+		else:
+			current_power = "0%"
+			light = False
+			flashlight_button.config(state = "disabled")
+
+		can_entity_kill()
+
+		if not dead:
+			print_to_description("Your flashlight has: " + current_power + " power remaining.")
+
 def assign_random_room():
 	room = random.randrange(ENTRANCE, TUNNEL)
 	return room
 
 def can_entity_kill():
 	global dead
+	global flashlight_power
 	global first_time_entity_activates
 	global turns_in_room_with_entity
 	global turns_entity_is_inactivate
 
-	if current_location == entity_one.location or current_location == entity_two.location:
-		if light and turns_in_room_with_entity >= 1:
-			print_to_description("With one quick slash, you fall to the ground, dead.")
+	if current_location == entity_one.location or current_location == entity_two.location or flashlight_power <= 0:
+		if (light and turns_in_room_with_entity >= 1) or flashlight_power <= 0:
+			if not flashlight_power <= 0:
+				print_to_description("With one quick slash, you fall to the ground, dead.")
+			else:
+				print_to_description("Your flashlight turns off, you try to turn it back on, but it refuses.\nYou start moving around the room, trying to find your way around, until you hear a terible sound, followed by immense pain in your body, you collapse to the ground. As your vision fades, you see one red eye staring at you.")
 			dead = True
 			set_current_state()
 		else:
@@ -910,6 +995,7 @@ def set_directions_to_move():
 
 def main():
 	notes_entity.location = assign_random_room()
+	battery_four.location = STORAGE_ROOM
 
 	build_interface()
 	set_current_state()
