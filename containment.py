@@ -386,13 +386,16 @@ def perform_use_command(object_name):
 
 	if not (game_object is None) and game_object.visible:
 		if game_object == flashlight and game_object.carried:
-			if light:
-				light = False
-				print_to_description("You turn off the light.\n")
-				can_entity_kill()
+			if not current_location > TUNNEL:
+				if light:
+					light = False
+					print_to_description("You turn off the light.\n")
+					can_entity_kill()
+				else:
+					light = True
+					print_to_description("You turn on the light.\n")
 			else:
-				light = True
-				print_to_description("You turn on the light.\n")
+				print_to_description("You are unable to use the flashlight here.")
 
 			set_current_image()
 		elif game_object == tablet and game_object.carried:
@@ -541,7 +544,13 @@ def describe_current_location():
 	
 def set_current_image():
 	if dead == False:
-		if light:
+		if (current_location == VOID_ONE):
+			image_label.img = PhotoImage(file = "res/void_one.gif")
+		elif (current_location == VOID_TWO):
+			image_label.img = PhotoImage(file = "res/void_two.gif")
+		elif (current_location == VOID_THREE) or (current_location == VOID_FOUR):
+			image_label.img = PhotoImage(file = "res/void_three.gif")
+		elif light:
 			if entity_one.location == current_location or entity_two.location == current_location:
 				if (current_location == ENTRANCE):
 					image_label.img = PhotoImage(file = "res/entity/entrance.gif")
@@ -611,12 +620,6 @@ def set_current_image():
 					image_label.img = PhotoImage(file = "res/normal/tunnel.gif")
 				elif (current_location == CONFERENCE_ROOM):
 					image_label.img = PhotoImage(file = "res/normal/conference_room.gif")
-				elif (current_location == VOID_ONE):
-					image_label.img = PhotoImage(file = "res/void_one.gif")
-				elif (current_location == VOID_TWO):
-					image_label.img = PhotoImage(file = "res/void_two.gif")
-				elif (current_location == VOID_THREE) or (current_location == VOID_FOUR):
-					image_label.img = PhotoImage(file = "res/void_three.gif")
 				else:
 					image_label.img = PhotoImage(file = "res/blank-1.gif")
 		else:
