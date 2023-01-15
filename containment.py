@@ -995,7 +995,7 @@ def set_directions_to_move():
 
 def main():
 	notes_entity.location = assign_random_room()
-	battery_four.location = STORAGE_ROOM
+	battery_four.location = assign_random_room()
 
 	build_interface()
 	set_current_state()
