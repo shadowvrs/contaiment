@@ -120,8 +120,8 @@ else:
 file_name = "security_codes.txt"
 
 def initialize_variables(): 
-	refresh_location = True
-	refresh_objects_visible = True
+	refresh_location = False
+	refresh_objects_visible = False
 	power = False
 	light = False
 	first_time_entity_activates = True
@@ -424,17 +424,20 @@ def perform_use_command(object_name):
 			else:
 				print_to_description("It's too dark to see through the tablet.\n")
 		elif (game_object == battery_one) or (game_object == battery_two) or (game_object == battery_three) or (game_object == battery_four) or (game_object == battery_five) or (game_object == battery_six):
-			flashlight_power += 6
+			if game_object.carried:
+				flashlight_power += 6
 
-			if flashlight_power > 10:
-				flashlight_power = 10
-				print_to_description("You replace the old battery with a new one, your flashlight's battery is now at 100%.\n")
+				if flashlight_power > 10:
+					flashlight_power = 10
+					print_to_description("You replace the old battery with a new one, your flashlight's battery is now at 100%.\n")
+				else:
+					print_to_description("You replace the old battery with a new one.\n")
+					determine_flashlight_power()
+
+				game_object.carried = False
+				game_object.location = 0
 			else:
-				print_to_description("You replace the old battery with a new one.\n")
-				determine_flashlight_power()
-
-			game_object.carried = False
-			game_object.location = 0
+				print_to_description("You must be holding this object to use it.\n")
 
 		elif game_object == breaker:
 			if light:
@@ -827,11 +830,6 @@ def determine_flashlight_power():
 		if not dead:
 			print_to_description("Your flashlight has: " + current_power + " power remaining.")
 
-def create_reset_button():
-	global reset_button
-
-	reset_button.grid(row=4, columnspan=4, sticky='nesw')
-
 def assign_random_room():
 	room = random.randrange(ENTRANCE, TUNNEL)
 	return room
@@ -852,7 +850,7 @@ def can_entity_kill():
 			
 			dead = True
 			set_current_state()
-			create_reset_button()
+			reset_button.grid(row=4, columnspan=4, sticky='nesw')
 		else:
 			entity_one.location = 0
 			entity_two.location = 0
@@ -1043,6 +1041,7 @@ def set_directions_to_move():
 def restart_game():	
 	initialize_variables()
 	set_current_state(True)
+	describe_current_inventory()
 
 def main():
 	initialize_variables()
@@ -1052,6 +1051,7 @@ def main():
 
 	build_interface()
 	set_current_state()
+	set_current_image()
 
 	root.mainloop()
 		
