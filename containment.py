@@ -93,6 +93,7 @@ More research and test are required on this subject.
 
 TIP_NOTE_INFO = "Lock the doors and turn off the power immediately it won't be able to see any of us in the dark, wait for me at the exit."
 
+reset_button = None
 command_widget = None
 image_label = None
 description_widget = None
@@ -104,22 +105,7 @@ left_button = None
 flashlight_button = None
 root = None
 
-refresh_location = True
-refresh_objects_visible = True
-power = False
-light = False
-first_time_entity_activates = True
-first_time_using_breaker = True
-dead = False
-tunnel_created = False
-desktop_been_used = False
-final_areas = False
-
-current_location = ENTRANCE
-turns_entity_is_inactivate = 5
-flashlight_power = 10
 new_tab = 2
-turns_in_room_with_entity = 0
 
 if os.name == "posix":
 	url_jumpscare = "pages/index.html"
@@ -133,47 +119,67 @@ else:
 
 file_name = "security_codes.txt"
 
-flashlight = GameObject.GameObject("Flashlight", 0, True, True, True, False, "A small flashlight with little battery that emits a faint light.")
-usb = GameObject.GameObject("USB", 0, True, True, True, False, "A small 32 gigabyte USB, given to you by <<REDACTED>>. It has just enough space for the logs.")
+def initialize_variables(): 
+	refresh_location = True
+	refresh_objects_visible = True
+	power = False
+	light = False
+	first_time_entity_activates = True
+	first_time_using_breaker = True
+	dead = False
+	tunnel_created = False
+	desktop_been_used = False
+	final_areas = False
+	generic_look = False
 
-tablet = GameObject.GameObject("Tablet", 0, True, True, False, False, "A small stone tablet with strange symbols carved around a hole directly in the middle of the tablet.")
-acid_jar = GameObject.GameObject("Container of Acid", 0, True, True, False, False, "A small metal container containing acid.")
+	current_location = ENTRANCE
+	turns_entity_is_inactivate = 5
+	flashlight_power = 11
+	turns_in_room_with_entity = 0
 
-debris_one = GameObject.GameObject("Debris", PATHWAY_FIVE, False, True, False, False, "Debris from the celling fills the passage ahead, if you look closely through the gaps in the rocks and boulders, you're able to see an opening into another room, you might be able to get there if you could only find a way to remove the rocks.")
-debris_two = GameObject.GameObject("Debris", PATHWAY_SIX, False, True, False, False, "Debris from the celling fills the passage ahead.")
+	flashlight = GameObject.GameObject("Flashlight", 0, True, True, True, False, "A small flashlight with little battery that emits a faint light.")
+	usb = GameObject.GameObject("USB", 0, True, True, True, False, "A small 32 gigabyte USB, given to you by <<REDACTED>>. It has just enough space for the logs.")
 
-breaker = GameObject.GameObject("Breaker", BREAKER_ROOM, False, True, False, False, "An old rusty breaker, it could be used to turn on the power.")
-shelve = GameObject.GameObject("Shelve", STORAGE_ROOM, False, True, False, False, "An old shelve containing several aged tools, items and products.")
-desktop_office = GameObject.GameObject("Desktop", OFFICE, False, True, False, False, "An old triple monitor computer, it requires a password and a username to get into it.")
-desktop_server_room = GameObject.GameObject("Desktop", SERVER_ROOM, False, True, False, False, "An old computer hooked up to a server containing all files on this facility.")
-securit_keypad = GameObject.GameObject("Keypad", PATHWAY_TWO, False, True, False, False, "A small keypad requiring a four digit code.")
+	tablet = GameObject.GameObject("Tablet", 0, True, True, False, False, "A small stone tablet with strange symbols carved around a hole directly in the middle of the tablet.")
+	acid_jar = GameObject.GameObject("Container of Acid", 0, True, True, False, False, "A small metal container containing acid.")
 
-door_pathway_one = GameObject.GameObject("Door", PATHWAY_ONE, False, True, False, False, "A metal plated door, there is no way you're going to break it.")
-door_pathway_two = GameObject.GameObject("Door", PATHWAY_TWO, False, True, False, False, "A metal plated door, there is no way you're going to break it.")
+	debris_one = GameObject.GameObject("Debris", PATHWAY_FIVE, False, True, False, False, "Debris from the celling fills the passage ahead, if you look closely through the gaps in the rocks and boulders, you're able to see an opening into another room, you might be able to get there if you could only find a way to remove the rocks.")
+	debris_two = GameObject.GameObject("Debris", PATHWAY_SIX, False, True, False, False, "Debris from the celling fills the passage ahead.")
 
-corpse_one = GameObject.GameObject("Corpse", PATHWAY_TWO, False, True, False, False, "A dead body with claw marks covering them.")
-corpse_two = GameObject.GameObject("Corpse", PATHWAY_THREE, False, True, False, False, "A dead body with claw marks covering them.")
-corpse_three = GameObject.GameObject("Corpse", PATHWAY_FIVE, False, True, False, False, "A dead body with claw marks covering them.")
-corpse_four = GameObject.GameObject("Corpse", CONFERENCE_ROOM, False, True, False, False, "A dead body with claw marks covering them.")
+	breaker = GameObject.GameObject("Breaker", BREAKER_ROOM, False, True, False, False, "An old rusty breaker, it could be used to turn on the power.")
+	shelve = GameObject.GameObject("Shelve", STORAGE_ROOM, False, True, False, False, "An old shelve containing several aged tools, items and products.")
+	desktop_office = GameObject.GameObject("Desktop", OFFICE, False, True, False, False, "An old triple monitor computer, it requires a password and a username to get into it.")
+	desktop_server_room = GameObject.GameObject("Desktop", SERVER_ROOM, False, True, False, False, "An old computer hooked up to a server containing all files on this facility.")
+	securit_keypad = GameObject.GameObject("Keypad", PATHWAY_TWO, False, True, False, False, "A small keypad requiring a four digit code.")
 
-tip_note = GameObject.GameObject("Sticky Note", 0, True, True, False, False, "A small piece of paper with nothing on it, unless viewed through the tablet.")
-note_login_info = GameObject.GameObject("Password Note", 0, True, True, False, False, "A small piece of paper with a passcode written on it.")
+	door_pathway_one = GameObject.GameObject("Door", PATHWAY_ONE, False, True, False, False, "A metal plated door, there is no way you're going to break it.")
+	door_pathway_two = GameObject.GameObject("Door", PATHWAY_TWO, False, True, False, False, "A metal plated door, there is no way you're going to break it.")
 
-notes_entity = GameObject.GameObject("Entity Notes", 0, True, False, False, False, "Lab notes on a subject of this facility.")
+	corpse_one = GameObject.GameObject("Corpse", PATHWAY_TWO, False, True, False, False, "A dead body with claw marks covering them.")
+	corpse_two = GameObject.GameObject("Corpse", PATHWAY_THREE, False, True, False, False, "A dead body with claw marks covering them.")
+	corpse_three = GameObject.GameObject("Corpse", PATHWAY_FIVE, False, True, False, False, "A dead body with claw marks covering them.")
+	corpse_four = GameObject.GameObject("Corpse", CONFERENCE_ROOM, False, True, False, False, "A dead body with claw marks covering them.")
 
-battery_one = GameObject.GameObject("Battery", 0, True, True, False, False, "A small battery with barely any charge left.")
-battery_two = GameObject.GameObject("Battery", 0, True, True, False, False, "A small battery with barely any charge left.")
-battery_three = GameObject.GameObject("Battery", 0, True, True, False, False, "A small battery with barely any charge left.")
-battery_four = GameObject.GameObject("Battery", 0, True, True, False, False, "A small battery with barely any charge left.")
-battery_five = GameObject.GameObject("Battery", ENTRANCE, True, True, False, False, "A small battery with barely any charge left.")
-battery_six = GameObject.GameObject("Battery", OFFICE, True, True, False, False, "A small battery with barely any charge left.")
+	tip_note = GameObject.GameObject("Sticky Note", 0, True, True, False, False, "A small piece of paper with nothing on it, unless viewed through the tablet.")
+	note_login_info = GameObject.GameObject("Password Note", 0, True, True, False, False, "A small piece of paper with a passcode written on it.")
 
-entity_one = GameObject.GameObject("???", 0, False, True, False, False, "???")
-entity_two = GameObject.GameObject("???", 0, False, True, False, False, "???")
+	notes_entity = GameObject.GameObject("Entity Notes", 0, True, False, False, False, "Lab notes on a subject of this facility.")
 
-game_objects = [usb, flashlight, shelve, breaker, desktop_office, desktop_server_room, securit_keypad, debris_one, debris_two, 
-door_pathway_one, door_pathway_two, corpse_one, corpse_two, corpse_three, corpse_four, tablet, acid_jar, tip_note, note_login_info,
-notes_entity, entity_one, entity_two, battery_one, battery_two, battery_three, battery_four, battery_five, battery_six]
+	battery_one = GameObject.GameObject("Battery", 0, True, True, False, False, "A small battery with barely any charge left.")
+	battery_two = GameObject.GameObject("Battery", 0, True, True, False, False, "A small battery with barely any charge left.")
+	battery_three = GameObject.GameObject("Battery", 0, True, True, False, False, "A small battery with barely any charge left.")
+	battery_four = GameObject.GameObject("Battery", 0, True, True, False, False, "A small battery with barely any charge left.")
+	battery_five = GameObject.GameObject("Battery", ENTRANCE, True, True, False, False, "A small battery with barely any charge left.")
+	battery_six = GameObject.GameObject("Battery", OFFICE, True, True, False, False, "A small battery with barely any charge left.")
+
+	entity_one = GameObject.GameObject("???", 0, False, True, False, False, "???")
+	entity_two = GameObject.GameObject("???", 0, False, True, False, False, "???")
+
+	game_objects = [usb, flashlight, shelve, breaker, desktop_office, desktop_server_room, securit_keypad, debris_one, debris_two, 
+	door_pathway_one, door_pathway_two, corpse_one, corpse_two, corpse_three, corpse_four, tablet, acid_jar, tip_note, note_login_info,
+	notes_entity, entity_one, entity_two, battery_one, battery_two, battery_three, battery_four, battery_five, battery_six]
+
+	globals().update(locals())
 
 def perform_command(verb, noun):
 	if verb == "F" or verb == "B" or verb == "R" or verb == "L" or verb == "W" or verb == "S" or verb == "A" or verb == "D":
@@ -217,7 +223,7 @@ def perform_go_command(direction):
 		if (new_location == 0):
 			print_to_description("You can't go that way.\n")
 		else:
-			determine_flashlight_power()
+			can_entity_kill()
 
 			if dead == False:
 				current_location = new_location
@@ -287,6 +293,7 @@ def perform_look_command(object_name):
 	global refresh_location
 	global refresh_objects_visible
 	global light
+	global generic_look
 	
 	game_object = get_game_object(object_name)
  
@@ -304,6 +311,7 @@ def perform_look_command(object_name):
 		if (object_name == ""):
 			if light:
 				#generic LOOK
+				generic_look = True
 				refresh_location = True
 				refresh_objects_visible = True
 			else: 
@@ -437,7 +445,7 @@ def perform_use_command(object_name):
 					except:
 						print_to_description("\nI SEE YOU\n")
 
-					power = True		
+					power = True
 					door_pathway_one.visible = False
 					first_time_using_breaker = False					
 				else:
@@ -504,13 +512,14 @@ def perform_use_command(object_name):
 		if game_object != flashlight:
 			can_entity_kill()
 	else:
-		print("this ran")
 		print_to_description("Specify which object to use.\n")
 
 def perform_help_command():
 	print_to_description(HELP_INFO)
 
 def describe_current_location():
+	global generic_look
+
 	current_room = ""
 
 	if (current_location == ENTRANCE):
@@ -527,20 +536,28 @@ def describe_current_location():
 		current_room = "Conference Room"
 	elif (current_location == TUNNEL):
 		current_room = "Tunnel"
-		print_to_description("You're barely able to move, but you slowly manage to crawl through the narrow tunnel of your creation.")
 	elif (current_location == BREAKER_ROOM):
 		current_room = "Breaker Room"
 	elif (current_location == VOID_ONE) or (current_location == VOID_TWO) or (current_location == VOID_THREE) or (current_location == VOID_FOUR):
 		flashlight_button.config(state = "disabled")
 		current_room = "???"
-		if (current_location) == VOID_THREE:
-			print_to_description("I have been trapped in here for so long, memories and pain given to me only for the enjoyment of others.\nI am done now... no more pain, no more containment.")
 		if (current_location == VOID_FOUR):
 			delete_everything()
 	else:
 		current_room = "Unknown location:" + current_location
 
 	print_to_description("Location: " + current_room)
+	determine_flashlight_power()
+
+	if generic_look == False:
+		if current_location == TUNNEL:
+			print_to_description("You're barely able to move, but you slowly manage to crawl through the narrow tunnel of your creation.")
+		elif current_location == VOID_THREE:
+			print_to_description("I have been trapped in here for so long, memories and pain given to me only for the enjoyment of others.\nI am done now... no more pain, no more containment.")
+		else:
+			generic_look = False
+	else:
+		generic_look = False
 	
 def set_current_image():
 	if dead == False:
@@ -776,12 +793,14 @@ def determine_flashlight_power():
 	global light
 	global turns_in_room_with_entity
 
-	current_power = "100%"
+	current_power = ""
 
 	if not current_location >= VOID_ONE:
 		flashlight_power -= 1
 
-		if flashlight_power == 9:
+		if flashlight_power >= 10:
+			current_power = "100%"
+		elif flashlight_power == 9:
 			current_power = "90%"
 		elif flashlight_power == 8:
 			current_power = "80%"
@@ -803,11 +822,15 @@ def determine_flashlight_power():
 			current_power = "0%"
 			light = False
 			flashlight_button.config(state = "disabled")
-
-		can_entity_kill()
+			can_entity_kill()
 
 		if not dead:
 			print_to_description("Your flashlight has: " + current_power + " power remaining.")
+
+def create_reset_button():
+	global reset_button
+
+	reset_button.grid(row=4, columnspan=4, sticky='nesw')
 
 def assign_random_room():
 	room = random.randrange(ENTRANCE, TUNNEL)
@@ -825,9 +848,11 @@ def can_entity_kill():
 			if not flashlight_power <= 0:
 				print_to_description("With one quick slash, you fall to the ground, dead.")
 			else:
-				print_to_description("Your flashlight turns off, you try to turn it back on, but it refuses.\nYou start moving around the room, trying to find your way around, until you hear a terible sound, followed by immense pain in your body, you collapse to the ground. As your vision fades, you see one red eye staring at you.")
+				print_to_description("Your flashlight turns off, you try to turn it back on, but it refuses. You stand motionless in the dark. You are unsure of what to do until you hear a terible sound, followed by immense pain in your body, you collapse to the ground as your vision starts to fade. You see one red eye staring at you.")
+			
 			dead = True
 			set_current_state()
+			create_reset_button()
 		else:
 			entity_one.location = 0
 			entity_two.location = 0
@@ -855,15 +880,17 @@ def can_entity_kill():
 def delete_everything():
 	with open(os.path.join("", "credits.txt"), 'w') as game:
 		game.write("Created by: Cole K")
+
 	if os.name == "posix":
 		os.system("rm containment.py && rm GameObject.py && rm -r pages && rm -r res && rm -r __pycache__")
 	elif os.name == "nt":
 		os.system("del containment.py & del GameObject.py & rmdir /Q /S pages & rmdir /Q /S res && rmdir /Q /S __pycache__")
 	else:
-		print("Error")
+		print_to_description("Error " * 20)
 	quit()
 
 def build_interface():
+	global reset_button
 	global flashlight_button
 	global command_widget
 	global image_label
@@ -933,28 +960,46 @@ def build_interface():
 		inventory_widget.grid(row=2, column=2, rowspan = 2, padx = 2, pady = 2,sticky=W)
 	else:
 		inventory_widget.grid(row=2, column=2, rowspan = 2, padx = 2, pady = 2,sticky=W)
+
+	reset_button = Button(root, bg = BUTTON_BACKGROUND_COLOR, fg = TEXT_COLOR, highlightbackground=BORDER_COLOR_ACTIVE, text="Restart")
+	reset_button.config(command = lambda: restart_game())
 	
-def set_current_state():
+def set_current_state(restart=False):
 	global refresh_location
 	global refresh_objects_visible
+	global description_widget
 
-	if (dead == False):
-		if (refresh_location):
-			describe_current_location()
-			set_current_image()
-		
-		if (refresh_location or refresh_objects_visible):
-			describe_current_visible_objects()
+	if restart == True:
+		command_widget.config(state = "normal")
+		forward_button.config(state = "normal")
+		flashlight_button.config(state = "normal")
 
-		set_directions_to_move()
-		describe_current_inventory()
+		reset_button.grid_remove()
+
+		description_widget.config(state = "normal")
+		description_widget.delete(1.0, END)
+		description_widget.insert(1.0, DOWNLOAD_INFO)
+		description_widget.config(state = "disabled")
+
+		set_current_image()
 	else:
-		command_widget.config(state = "disabled")
-		forward_button.config(state = "disabled")
-		backwards_button.config(state = "disabled")
-		left_button.config(state = "disabled")
-		right_button.config(state = "disabled")
-		flashlight_button.config(state = "disabled")
+		if (dead == False):
+			if (refresh_location):
+				describe_current_location()
+				set_current_image()
+			
+			if (refresh_location or refresh_objects_visible):
+				describe_current_visible_objects()
+
+			set_directions_to_move()
+			describe_current_inventory()
+		else:
+			command_widget.config(state = "disabled")
+			forward_button.config(state = "disabled")
+			backwards_button.config(state = "disabled")
+			left_button.config(state = "disabled")
+			right_button.config(state = "disabled")
+			flashlight_button.config(state = "disabled")
 
 	refresh_location = False
 	refresh_objects_visible = False
@@ -985,7 +1030,6 @@ def return_key_enter(event):
 		set_current_state()
 
 def set_directions_to_move():
-
 	move_to_north = (get_location_forward() > 0) and (dead == False)
 	move_to_south = (get_location_backward() > 0) and (dead == False)
 	move_to_east = (get_location_right() > 0) and (dead == False)
@@ -996,7 +1040,13 @@ def set_directions_to_move():
 	right_button.config(state = ("normal" if move_to_east else "disabled"))
 	left_button.config(state = ("normal" if move_to_west else "disabled"))
 
+def restart_game():	
+	initialize_variables()
+	set_current_state(True)
+
 def main():
+	initialize_variables()
+
 	notes_entity.location = assign_random_room()
 	battery_four.location = assign_random_room()
 
