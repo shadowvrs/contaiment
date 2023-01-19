@@ -458,6 +458,8 @@ def perform_use_command(object_name):
 		elif game_object == desktop_office:
 			if light:
 				if desktop_been_used == False:
+					desktop_been_used = True
+
 					if note_login_info.carried:
 						use_desktop()
 					else:
