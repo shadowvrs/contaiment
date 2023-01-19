@@ -81,14 +81,14 @@ ENTITY_INFO = """
 Subject #01482
 
 Risk level: 9
-Origin: Unkown
+Origin: Unknown
 Height: Dynamic
 
 Tests on subject #01482 have shown that it is by far one of the most dangerous subjects contained in this facility.
 During tests, subject demonstrated the abilites to exist in multiple locations, disrupt electronics and cause madness to organisms after prolonged exposure.
 The absence of light seems to have a calming affect on the subject, whilst light seems to aggravate it to an extreme.
 This subject also appears to be constantly distant from the reasurch being done on them, almost like they're day dreaming.
-More research and test are required on this subject.
+More reasurch and test are required on this subject.
 """
 
 TIP_NOTE_INFO = "Lock the doors and turn off the power immediately it won't be able to see any of us in the dark, wait for me at the exit."
@@ -341,7 +341,7 @@ def perform_read_command(object_name):
 			if ((game_object.visible == False) and (game_object.carried == False)):
 				print_to_description("Object does not exist.\n")
 			else:
-				print_to_description("There is nothing to read that object.\n")
+				print_to_description("There is nothing to read on that object.\n")
 	else:
 		print_to_description("Object does not exist.\n")
 
